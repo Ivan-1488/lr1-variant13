@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Разделение изображения на четыре части</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+  <main class="container">
+    <header class="hero"><span class="eyebrow">Лабораторная работа № 1 · Вариант 13</span>
+      <h1>Анализ изображения</h1>
+      <p>Загрузите изображение. Приложение разделит его на четыре фрагмента и построит RGB-гистограммы для исходника и каждого фрагмента.</p>
+    </header>
+    {% with messages = get_flashed_messages(with_categories=true) %}{% if messages %}
+      <section class="messages">{% for category, message in messages %}<div class="alert {{ category }}">{{ message }}</div>{% endfor %}</section>
+    {% endif %}{% endwith %}
+    <section class="panel">
+      <form action="{{ url_for('process') }}" method="post" enctype="multipart/form-data">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <label class="field-label" for="image">Исходное изображение</label>
+        <input id="image" name="image" type="file" accept="image/png,image/jpeg,image/webp,image/bmp" required>
+        <p class="hint">PNG, JPG, WEBP или BMP · не более 8 Мбайт</p>
+        <fieldset class="watermark-options">
+          <legend>Водяной знак (необязательно)</legend>
+          <label class="field-label" for="watermark_type">Тип</label>
+          <select id="watermark_type" name="watermark_type">
+            <option value="none">Без водяного знака</option>
+            <option value="text">Текст</option>
+            <option value="image">Маленькая картинка</option>
+          </select>
+          <label class="field-label" for="watermark_text">Текст (если выбран тип «Текст»)</label>
+          <input id="watermark_text" name="watermark_text" type="text" maxlength="100" placeholder="Например, ЛР № 1">
+          <label class="field-label" for="watermark_image">Картинка (если выбран тип «Маленькая картинка»)</label>
+          <input id="watermark_image" name="watermark_image" type="file" accept="image/png,image/jpeg,image/webp,image/bmp">
+          <p class="hint">Не более 1 МиБ; размер на изображении автоматически уменьшается.</p>
+          <label class="field-label" for="watermark_opacity">Непрозрачность (0–100 %)</label>
+          <input id="watermark_opacity" name="watermark_opacity" type="number" min="0" max="100" value="50">
+          <label class="field-label" for="watermark_position">Положение</label>
+          <select id="watermark_position" name="watermark_position">
+            <option value="bottom-right">Справа снизу</option>
+            <option value="bottom-left">Слева снизу</option>
+            <option value="top-right">Справа сверху</option>
+            <option value="top-left">Слева сверху</option>
+            <option value="center">По центру</option>
+          </select>
+        </fieldset>
+        <label class="field-label" for="captcha_answer">Проверка от роботов: сколько будет {{ captcha_question }}?</label>
+        <input id="captcha_answer" name="captcha_answer" type="number" inputmode="numeric" required>
+        <div class="hp" aria-hidden="true"><label for="website">Не заполнять</label><input id="website" name="website" tabindex="-1" autocomplete="off"></div>
+        <button type="submit">Разделить и построить графики</button>
+      </form>
+    </section>
+    <footer>Обработка выполняется на сервере. Результаты временно доступны по уникальной странице обработки.</footer>
+  </main>
+</body></html>

@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Результат обработки</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body><main class="container wide">
+  <header class="hero"><span class="eyebrow">Вариант 13 · Результат обработки</span><h1>Изображение разделено</h1>
+    <p>{{ result.original_name }} · исходный размер {{ result.width }} × {{ result.height }} пикселей</p>
+    <a class="back" href="{{ url_for('index') }}">← Обработать другое изображение</a>
+  </header>
+  <section class="panel"><h2>Обработанное изображение{% if result.watermark_applied %} с водяным знаком{% endif %}</h2>
+    {% if result.watermark_applied %}<p class="hint">Оригинал без водяного знака сохранён отдельно.</p>{% endif %}
+    <div class="preview"><img src="{{ url_for('static', filename='results/' ~ result_id ~ '/' ~ result.source) }}" alt="Исходное изображение"></div>
+    <img class="chart" src="{{ url_for('static', filename='results/' ~ result_id ~ '/' ~ result.source_histogram) }}" alt="Гистограмма исходного изображения">
+  </section>
+  <section class="grid">
+    {% for part in result.parts %}<article class="panel part-card">
+      <h2>{{ part.label }}</h2><p class="hint">Размер: {{ part.width }} × {{ part.height }} пикселей</p>
+      <div class="preview"><img src="{{ url_for('static', filename='results/' ~ result_id ~ '/' ~ part.image) }}" alt="{{ part.label }}"></div>
+      <img class="chart" src="{{ url_for('static', filename='results/' ~ result_id ~ '/' ~ part.histogram) }}" alt="Гистограмма: {{ part.label }}">
+      <a class="download" download="{{ part.image }}" href="{{ url_for('static', filename='results/' ~ result_id ~ '/' ~ part.image) }}">Скачать фрагмент</a>
+    </article>{% endfor %}
+  </section>
+</main></body></html>
